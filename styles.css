@@ -1,0 +1,271 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+body {
+  background-color: #f7f9fc;
+  padding: 20px;
+  color: #333;
+  line-height: 1.6;
+}
+
+div,
+p {
+  margin-bottom: 20px;
+}
+
+#main {
+  display: flex;
+}
+
+/* Common Input and Button Styles */
+input,
+select,
+button {
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+input,
+select {
+  border: 1px solid #ddd;
+  width: 250px;
+  margin-right: 10px;
+  transition: border-color 0.2s;
+}
+
+input:focus,
+select:focus {
+  border-color: #007bff;
+}
+
+button {
+  border: none;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  width: 7.5rem;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: scale(1.02);
+}
+
+#gun {
+  input,
+  select {
+    padding: 10px 15px;
+  }
+
+  button {
+    padding: 10px 15px;
+  }
+
+  #sell {
+    background-color: #e74c3c;
+  }
+
+  #sell:hover {
+    background-color: #c0392b;
+  }
+
+  #buy {
+    background-color: #3498db;
+  }
+
+  #buy:hover {
+    background-color: #2980b9;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+}
+
+/* Messages and Info */
+h3,
+h4 {
+  color: #2c3e50;
+  margin: 12px 0;
+  font-weight: 600;
+}
+
+.account-details,
+#orderbook,
+#gun {
+  margin-right: 2rem;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  font-size: 1rem;
+  height: min-content;
+}
+
+#gun {
+  max-width: 20rem;
+}
+
+#orderbook {
+  width: 60rem;
+}
+
+/* Orderbook Styles */
+.orderbook-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.orderbook-table {
+  width: 48%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.orderbook-table th,
+.orderbook-table td {
+  border: 1px solid #e0e0e0;
+  padding: 10px;
+  text-align: right;
+}
+
+.orderbook-table th {
+  background-color: #f7f7f7;
+}
+
+.orderbook-table tr:hover {
+  background-color: #eee;
+  cursor: pointer;
+}
+
+.bid {
+  background-color: rgba(52, 152, 219, 0.1);
+}
+
+.ask {
+  background-color: rgba(231, 76, 60, 0.1);
+}
+
+.orderbook-table.bids td:first-child,
+.orderbook-table.bids th:first-child {
+  text-align: left;
+}
+
+.orderbook-table.bids td:last-child,
+.orderbook-table.bids th:last-child {
+  text-align: right;
+}
+
+.orderbook-table.asks td:first-child,
+.orderbook-table.asks th:first-child {
+  text-align: left;
+}
+
+/* Bracket order inputs style */
+#bracket-check {
+  margin-top: 1rem;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  max-width: 200px;
+}
+
+#bracket-check label {
+  flex: 1;
+  white-space: nowrap;
+  margin-right: 15px;
+  margin: auto;
+}
+
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
+.tip {
+  font-size: smaller;
+  color: rgba(0, 0, 0, 0.438);
+}
+
+.account-details h2 {
+  color: #333;
+  font-size: 24px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  margin-top: 0;
+}
+
+.account-details ul {
+  list-style-type: none;
+}
+
+.account-details li {
+  padding: 8px 0;
+  color: #555;
+}
+
+.account-details li:nth-child(odd) {
+  background-color: #f5f5f5;
+}
+
+.account-details li:last-child {
+  padding-bottom: 0;
+}
+
+/* Style for Positions Table */
+.positions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 0.9rem;
+}
+
+.positions-table th,
+.positions-table td {
+  padding: 8px 15px;
+  border: 1px solid #e0e0e0;
+  text-align: left;
+}
+
+.positions-table th {
+  background-color: #f7f7f7;
+  font-weight: 600;
+  color: #333;
+}
+
+.positions-table tr:hover {
+  background-color: #f4f4f4;
+}
+
+/* Differentiate between LONG and SHORT positions */
+.positions-table tr.long {
+  background-color: rgba(52, 152, 219, 0.1); /* Light Blue for LONG */
+}
+
+.positions-table tr.short {
+  background-color: rgba(231, 76, 60, 0.1); /* Light Red for SHORT */
+}
+
+.positions-table tr.long td:last-child,
+.positions-table tr.short td:last-child {
+  font-weight: bold;
+}
+
+.positions-table tr.long td:last-child {
+  color: #3498db; /* Blue for LONG */
+}
+
+.positions-table tr.short td:last-child {
+  color: #e74c3c; /* Red for SHORT */
+}

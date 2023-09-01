@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTMX BTC Orderbook</title>
+    <script src="https://unpkg.com/htmx.org"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+  </head>
+
+  <body>
+    <div
+      hx-get="https://api-client.flowmatic.xyz/api/orderbook/0"
+      hx-trigger="every 1s"
+      hx-swap="none"
+      hx-target="#orderbook"
+    ></div>
+
+    <div>
+      <form>
+        <input
+          id="privkey"
+          name="privkey"
+          type="text"
+          placeholder="Input solana private-key..."
+        />
+        <input
+          id="trgkey"
+          name="trgkey"
+          type="text"
+          placeholder="Input trg public-key..."
+        />
+        <button
+          id="submit-account-info"
+          name="submit"
+          type="submit"
+          hx-target="#account-info"
+          hx-post="http://localhost:3000/account-info"
+          hx-include="#trgkey #privkey"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+
+    <div id="main">
+      <div id="account-info"></div>
+      <div id="orderbook">Loading order book...</div>
+      <div id="gun">
+        <!-- Order Type Selector -->
+        <label>Order Type:</label>
+        <select
+          hx-target="#limit"
+          id="orderType"
+          hx-trigger="change"
+          hx-swap="outerHTML"
+          hx-target="#dynamic-fields"
+        >
+          <option value="market">Market</option>
+          <option value="limit">Limit</option>
+        </select>
+
+        <div id="bracket-check">
+          <label>Bracket Order:</label>
+          <input
+            type="checkbox"
+            id="bracketToggle"
+            hx-trigger="change"
+            hx-swap="outerHTML"
+            hx-target="#bracket-fields"
+          />
+        </div>
+
+        <div id="limit"></div>
+
+        <div>
+          <label>Size:</label>
+          <input type="number" id="orderSize" placeholder="Enter size..." />
+        </div>
+
+        <div id="bracket-fields"></div>
+
+        <button
+          id="buy"
+          hx-get="http://localhost:3000/order?side=buy"
+          hx-target="#confirmation"
+          hx-trigger="click"
+        >
+          Buy
+        </button>
+        <button
+          id="sell"
+          hx-get="http://localhost:3000/order?side=sell"
+          hx-target="#confirmation"
+          hx-trigger="click"
+        >
+          Sell
+        </button>
+
+        <p id="confirmation"></p>
+      </div>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>
