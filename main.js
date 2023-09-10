@@ -7,20 +7,80 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.body.addEventListener("htmx:configRequest", async function (event) {
     if (event.target.getAttribute("hx-target") === "#account-info") {
-      console.log(event.detail);
-      event.detail.parameters["pubkey"] =
-        window.localStorage.getItem("public-key");
-      event.detail.parameters["privkey"] =
-        window.localStorage.getItem("private-key");
-      event.detail.parameters["trgkey"] =
-        window.localStorage.getItem("trg-key");
+      console.log("Setting up keys...");
+      await handleKeys(event);
+      handleAccountInfoRequest(event);
     }
+
+    if (event.target.getAttribute("hx-target") === "#account-info-container") {
+      console.log("Setting up request...");
+      handleAccountInfoRequest(event);
+    }
+
     if (event.target.getAttribute("hx-target") === "#trg") {
       console.log(event.detail);
       event.detail.parameters["privkey"] =
         window.localStorage.getItem("private-key");
     }
   });
+
+  async function handleKeys(event) {
+    window.localStorage.setItem("private-key", "");
+    window.localStorage.setItem("public-key", "");
+    window.localStorage.setItem("trg-key", "");
+
+    console.log("Getting keys...");
+    const privkey = JSON.parse(document.getElementById("privkey").value);
+    const trgkey = document.getElementById("trgkey").value;
+    const { publickey, isTrgValid } = await fetchPublicKey(privkey, trgkey);
+    console.table({ publickey, isTrgValid });
+
+    if (publickey === "Error") {
+      console.log("Error, wrong privatekey...");
+      privkey = "Error: private key array is not valid";
+      return;
+    }
+
+    console.log("Setting keys...");
+    // Set Keys
+    window.localStorage.setItem("private-key", JSON.stringify(privkey));
+    document.getElementById("privkey").value = "";
+    console.log("Private Key set...");
+
+    window.localStorage.setItem("public-key", JSON.stringify(publickey));
+    console.log("Public Key set...");
+
+    console.log("Is Trg Valid:", isTrgValid);
+
+    if (isTrgValid) {
+      document.getElementById("trgkey").value = "";
+      window.localStorage.setItem("trg-key", trgkey);
+      console.log("Trg Key set...");
+    } else {
+      document.getElementById("trgkey").placeholder = "No TRG Key inserted...";
+      window.localStorage.setItem("trg-key", "NaN");
+      console.log("No TRG Key to set...");
+    }
+
+    console.log("Finished setting keys...");
+
+    return;
+  }
+
+  function handleAccountInfoRequest(event) {
+    console.log("Handling request to server for account info...");
+    event.detail.parameters["pubkey"] =
+      window.localStorage.getItem("public-key");
+    event.detail.parameters["privkey"] =
+      window.localStorage.getItem("private-key");
+    event.detail.parameters["trgkey"] = window.localStorage.getItem("trg-key");
+    console.table({
+      trg: event.detail.parameters["trgkey"],
+      priv: event.detail.parameters["privkey"],
+      pub: event.detail.parameters["pubkey"],
+    });
+    console.log("Making request...", event);
+  }
 
   function handleAfterOnLoad(event) {
     if (event.target.getAttribute("hx-target") === "#orderbook") {
@@ -31,10 +91,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function handleBodyClick(event) {
-    if (event.target.getAttribute("hx-target") === "#pubkey") {
-      handlePrivateKey(event);
-    }
-
     if (event.target.getAttribute("hx-target") === "#confirmation") {
       clearConfirmation();
     }
@@ -101,33 +157,14 @@ document.addEventListener("DOMContentLoaded", function () {
     return content;
   }
 
-  async function handlePrivateKey(event) {
-    // Private Key
-    const privkey = JSON.parse(document.getElementById("privkey").value);
-    window.localStorage.setItem("private-key", JSON.stringify(privkey));
-    document.getElementById("privkey").value = "";
-
-    // Public Key
-    const pubkey = await fetchPublicKey(privkey);
-    window.localStorage.setItem("public-key", JSON.stringify(pubkey));
-
-    // Account message
-    account = `<div>Account: ${pubkey}</div>`;
-
-    // TRG Pubkey (if any)
-    const trgkey = document.getElementById("trgkey").value;
-    window.localStorage.setItem("trg-key", trgkey);
-    document.getElementById("trgkey").value = "";
-  }
-
-  async function fetchPublicKey(privkey) {
+  async function fetchPublicKey(privkey, trgkey) {
     const response = await fetch("http://localhost:3000/public-key", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ privkey }),
+      body: JSON.stringify({ privkey, trgkey }),
     });
     const data = await response.json();
-    return data.publicKey;
+    return { publickey: data.publickey, isTrgValid: data.isTrgValid };
   }
 
   function clearConfirmation() {

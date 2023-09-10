@@ -44,7 +44,7 @@ function formatAccountToHTMLComponent(data) {
       : "Liquidatable";
 
   return `
-      <div hx-post="http://localhost:3000/account-info" hx-trigger="every 1s" hx-target="#account-info">
+      <div id="account-info-container" hx-post="http://localhost:3000/account-info" hx-trigger="" hx-target="#account-info-container" hx-swap="outerHtml">
       <div class='account-details'>
       <h2>Positions</h2>
       ${positionsHTML}
@@ -53,7 +53,9 @@ function formatAccountToHTMLComponent(data) {
         <h2>Account Details</h2>
         <ul>
           <li>Account Value: $${formatToUsd(data.portfolioValue)} USDC</li>
-          <li>Open Positions Value: $${formatToUsd(data.positionValue)} USDC</li>
+          <li>Open Positions Value: $${formatToUsd(
+            data.positionValue
+          )} USDC</li>
           <li>Net Cash (Excess Margin): $${formatToUsd(
             data.excessMargin
           )} USDC</li>

@@ -58,37 +58,35 @@ button:hover {
   transform: scale(1.02);
 }
 
-#gun {
-  input,
-  select {
-    padding: 10px 15px;
-  }
+#gun input,
+select {
+  padding: 10px 15px;
+}
 
-  button {
-    padding: 10px 15px;
-  }
+button {
+  padding: 10px 15px;
+}
 
-  #sell {
-    background-color: #e74c3c;
-  }
+#sell {
+  background-color: #e74c3c;
+}
 
-  #sell:hover {
-    background-color: #c0392b;
-  }
+#sell:hover {
+  background-color: #c0392b;
+}
 
-  #buy {
-    background-color: #3498db;
-  }
+#buy {
+  background-color: #3498db;
+}
 
-  #buy:hover {
-    background-color: #2980b9;
-  }
+#buy:hover {
+  background-color: #2980b9;
+}
 
-  label {
-    display: block;
-    margin-bottom: 10px;
-    font-weight: 500;
-  }
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 500;
 }
 
 /* Messages and Info */

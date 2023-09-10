@@ -1,8 +1,8 @@
 const express = require("express");
-const solana = require("@solana/web3.js");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const { formatAccountToHTMLComponent } = require("./components");
+const { returnPublicKey, isValidSolanaPubkey } = require("./utility");
 
 const app = express();
 const PORT = 3000;
@@ -37,11 +37,11 @@ function getPublicKey(req, res) {
       throw new Error("Private key not provided or has an invalid format");
     }
 
-    const privateKeyUint8Array = new Uint8Array(req.body.privkey);
-    const account = new solana.Keypair.fromSecretKey(privateKeyUint8Array);
-    const publicKey = account.publicKey.toString();
+    const publickey = returnPublicKey(req.body.privkey);
 
-    res.json({ publicKey });
+    const isTrgValid = isValidSolanaPubkey(req.body.trgkey);
+
+    res.json({ publickey, isTrgValid });
   } catch (error) {
     handleError(res, error);
   }
@@ -49,17 +49,23 @@ function getPublicKey(req, res) {
 
 async function getAccountInfo(req, res) {
   try {
-    console.log("Received request body:", req.body);
+    console.log("Received request body:");
 
     const privkey = JSON.parse(req.body.privkey);
     const trgkey = req.body.trgkey;
     const pubkey = req.body.pubkey;
 
+    console.log({
+      privkey: JSON.parse(req.body.privkey),
+      trgkey: req.body.trgkey,
+      pubkey: req.body.pubkey,
+    });
+
     if (!privkey) {
       throw new Error("Private key not provided or has an invalid format");
     }
 
-    if (!trgkey) {
+    if (trgkey === "NaN") {
       res.send(
         `<div>Account: ${pubkey}</div><div id="trg">TRG: <button hx-post="http://localhost:3000/create-trg" hx-target="#trg" hx-trigger="click" >Create TRG</button></div>`
       );
@@ -73,7 +79,7 @@ async function getAccountInfo(req, res) {
     });
 
     const data = await response.json();
-    const html = await formatAccountToHTMLComponent(data.message);
+    const html = formatAccountToHTMLComponent(data.message);
 
     res.send(html);
   } catch (error) {
@@ -89,18 +95,17 @@ async function createTrg(req, res) {
       throw new Error("Private key not provided or has an invalid format");
     }
 
-    // const response = await fetch(`${FLOW_API}/create-trg`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: req.body.privkey,
-    // });
+    const response = await fetch(`${FLOW_API}/create-trg`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: req.body.privkey,
+    });
 
-    // const data = await response.json();
+    const data = await response.json();
 
-    // res.send(`<p>TRG: ${data.trgPubkey}</p>`);
-    res.send(`<p>TRG: jadndnwieweidwediwej</p>`);
+    res.send(`<p>TRG: ${data.trgPubkey}</p>`);
   } catch (error) {
     handleError(res, error);
   }
